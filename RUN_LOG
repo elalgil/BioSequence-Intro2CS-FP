@@ -1,0 +1,73 @@
+# 0:05
+# project architecture
+
+# 0:18
+# main data structures used in project:
+# Reference Kmers Database, Reads Kmers Database
+
+# 0:35
+# classes used in program:
+# Kmer, Read, Reference
+
+# 0:47
+# code example - Class Read
+
+# 0:58 
+# Class Alignment
+
+# 1:09
+# code example - important function in project
+# map_reads() function from Class Alignment
+
+# 1:22 
+# data structures comparison
+# explanation why data structures were chosen
+
+# 1:41
+# example of principals learned in course:
+# using functional programming and OOP
+
+# 1:48
+# loading FASTA/Q files
+# using generators
+
+# 1:56
+# loading\ dumping ALN\ KDB files
+# explaining the files structure
+# using pickle and gzip modules
+
+# 2:08
+# extension - quality
+# explanation the method of implementation
+
+# 2:22
+# extension - reverse
+# explanation the method of implementation
+
+# 2:39
+# extension - coverage
+# explanation the method of implementation
+
+# 2:54
+# extension - similarity
+# explanation the method of implementation
+
+# 3:04
+# example of extension EXTSIM:
+python3 main.py -t dumpref -g ref_extsim.fa -k 31 --filter-similar
+
+# 3:44
+# example of extension EXTQUALITY:
+python3 main.py -t dumpalign -g ref_quality.fa -k 31 --reads reads_quality.fq --min-read-quality 29
+
+# 4:14
+# example of extension EXTQUALITY:
+python3 main.py -t dumpalign -g ref_quality.fa -k 31 --reads reads_quality.fq --max-genomes 2
+
+# 4:25
+# program's usage instructions:
+python3 main.py --help
+
+# 4:30
+# example of extension EXTREVCOMP:
+python3 main.py -t dumpalign -g ref_reverse.fa -k 31 --reads reads_reverse.fq --reverse-complement
