@@ -1,83 +1,105 @@
 # Bio Sequence / Elal Gilboa
 
-## Extensions:
+## 🔧 Extensions:
 
-* EXTQUALITY - filter out of mapping process low quality reads, low quality Kmers and highly redundant Kmers.
-* EXTREVCOMP - choose for each read the best orientation based on number of unique Kmers, and map read in chosen orientation.
-* EXTCOVERAGE - calculate for each requested genome the unique and ambiguous "positions" covered by unique and ambiguous reads.
-* EXTSIM - filter out of Reference Kmers DB the highly similar genomes, show statistics on genomes filtered out from FASTA file.
+- **EXTQUALITY** – Filters out low-quality reads, low-quality Kmers, and highly redundant Kmers during the mapping process.
+- **EXTREVCOMP** – Determines the best orientation for each read (forward/reverse) based on the number of unique Kmers.
+- **EXTCOVERAGE** – Calculates genome coverage based on unique and ambiguous read alignments.
+- **EXTSIM** – Filters highly similar genomes from the reference Kmer DB and provides filtering statistics.
 
+---
 
-Program works from Command line by running: python3 main.py -t [chosen_task] [chosen_flags]
+## 🚀 Usage
 
-## Valid flag combinations:
+Run from the command line:
+```bash
+python3 main.py -t [chosen_task] [chosen_flags]
+```
 
-* reference - required parameters: -g genonefile_path(FASTA format, '.fa' ending), -k kmer_size(21-31) -r reference_path(output file name, '.kdb' ending)
+---
 
-* dumref - -r reference_path(input KDB file) or -g genomefile_path and -k kmer_size
+## ✅ Valid Flag Combinations:
 
-# optional parameters of reference and dumpref from extenstions:
-  --filter-similar, --similarity-threshold THRESHOLD (positive)
+### Reference Creation
+```bash
+-t reference -g genome.fa -k 21 -r output.kdb
+```
+Required:
+- `-g`: genome file path (FASTA format)
+- `-k`: kmer size (21–31)
+- `-r`: output reference DB file path (`.kdb`)
 
-* align - -r REFERENCEFILE.kdb, -a ALIGNFILE.aln(output file name, '.aln' ending) ,--reads READS.fq(FASTQ reads file) ,optional: [-m UNIQE_THRESHOLD] [-p AMBIGUOUS_THRESHOLD]
+Optional (for EXTENSIM):
+- `--filter-similar`
+- `--similarity-threshold THRESHOLD`
 
-* align - -g GENOMEFILE.fa, -k KMER-SIZE -a ALIGNFILE.aln, --reads READS.fq ,optional:[-m UNIQE_THRESHOLD] [-p AMBIGUOUS_THRESHOLD]
+### Dump Reference
+```bash
+-t dumpref -r ref.kdb
+```
+Or:
+```bash
+-t dumpref -g genome.fa -k 21
+```
 
-* dumpalign - -a ALIGNFILE.aln (ALN input file) **this flag can only be used alone**
-* dumpalign - -r REFERENCEFILE.kdb, --reads READS.fq, optional: [-m UNIQE_THRESHOLD] [-p AMBIGUOUS_THRESHOLD]
-* dumpalign - -g GENOMEFILE.fa, -k KMER-SIZE, --reads READS.fq, optional: [-m UNIQE_THRESHOLD] [-p AMBIGUOUS_THRESHOLD]
+### Align Reads
+```bash
+-t align -r ref.kdb -a output.aln --reads input.fq [options]
+```
+Or:
+```bash
+-t align -g genome.fa -k 21 -a output.aln --reads input.fq [options]
+```
+Options:
+- `-m`: unique threshold
+- `-p`: ambiguous threshold
 
-# optional parameters for align and dumpalign from extensions:
+### Dump Alignments
+```bash
+-t dumpalign -a output.aln
+```
+*Can only be used alone.*
 
-* EXTQUALITY: --min-read-quality MRQ(positive threshold), --min-kmer-quality MKQ (positive threshold), --max-genomes MG (positive int)
-* EXTREVCOMP: --reverse-complement (boolean flag)
-* EXTCOVERAGE: --coverage (boolean flag), --genomes GENOMES(string of genomes headers separator by ',' all genomes must be in GENOMEFILE.fa or in       REFERENCEFILE.kdb). --min-coverage MC (positive int threshold), --full-coverage (Boolean flag, can't be used together with --genomes).
+Or:
+```bash
+-t dumpalign -r ref.kdb --reads input.fq [options]
+```
+Or:
+```bash
+-t dumpalign -g genome.fa -k 21 --reads input.fq [options]
+```
 
+---
 
-## Design
-# Data Structures:
-	* I chose to implement Reference Kmers DB as a dictionary because the "most expensive" operation in the Pseudo Alignment algorithm is comparing a read's single Kmer to the entire Reference Kmers DB, by using a dictionary the 	key= "kmer's sequence" is hashed resulting O(1) running time for this action.
+## 🔌 Extension Parameters
 
-# I chose to implement 5 classes: Kmer, Read, Reference, Alignment, KmerDB:
-* class Kmer:
-	data:str - a sequence (A,T,G,C)
-	locs_in_read: List[int] - a list of indexes in Read
-	specific: bool - indicator in this Kmer is specific or Unspecifc
-	sources_refs: List[str] - list of all kmers sources found in Reference Kmer Database after mapping process
-	id: int - in-class identifier
+- **EXTQUALITY**: `--min-read-quality MRQ`, `--min-kmer-quality MKQ`, `--max-genomes MG`
+- **EXTREVCOMP**: `--reverse-complement`
+- **EXTCOVERAGE**: `--coverage`, `--genomes g1,g2,...`, `--min-coverage MC`, `--full-coverage`
 
-*class Read:
-	data: str - a sequence (A,T,G,C)
-	quality: str - a sequence on chars representing read's quality
-	header:str - read's header from FASTQ file
-	status: str - mapping result for read (Unmapped/ Unique/ Ambiguous)
-	orientation: str - preferred orientation for this read(for EXTREVCOMP, by default it's 'Forward')
+---
 
-* class Reference:
-	genome: str - a sequence (A,T,G,C)
-	header: str - genome's header from FASTA file
-	kmers: Dict[str, List[int]] - a dictionary mapping genomes kmers to their locations in genome
-	id: int - in-class identifier(used in similarity extension)
+## 🧠 Design
 
-* class Alignment:
-	references: List[str] - a list of genome's headers
-	reads: Dict[str, Read] - a dictionary mapping read headers to Read objects
-	ref_kmers_db: KmerDB - Reference Kmer Database
-	reads_kmers_db: Dict[str, List[Kmer]] - database mapping a read to all of its Kmers
-	quality_stats: List[str] - this is used to store filtration data applying Quality extension in mapping process and not printed in a dump
-	coverage_sum: Dict[str, Dict[str, Any]] - used to store coverage summary applying Coverage extension and not printing it in a dump
+### Data Structures:
+- Reference Kmers DB is implemented as a `dict[str, List[int]]` for O(1) lookup time in pseudo-alignment.
 
-* class KmerDB:
-	refs_kmers: Dict[str, Dict[str, List[int]]] - the database for Kmers from all genomes, mapping a kmer string to a dictionary of all genomes in which it appears and the locations in this genome
-	similarity: Dict[str, Dict[str, Any]] - this is used to store data about similarity summary if not printed in a dump
+### Classes:
+- `Kmer`: holds sequence data, locations, uniqueness, and reference sources.
+- `Read`: holds read data, quality, header, mapping status, and orientation.
+- `Reference`: holds genome data, header, Kmers, and ID for similarity calculations.
+- `Alignment`: manages mapping results, coverage, and quality statistics.
+- `KmerDB`: contains all reference Kmers and optional similarity statistics.
 
-# ALN/ KDB format:
-I used pickle and gzip modules to convert python objects into bitstreams and then compress them into a file.
-ALN file - contain an Alignment object after mapping with all mapping results per Read.
-KDB file - contain 2 pickled items: KmerDB and genome_bases (dictionary mapping genome headers to their lengths - necessary because original genomes sequences from FASTA file are not saved in KmerDB object)
+### File Formats:
+- `*.aln`: pickled `Alignment` object, compressed using `gzip`
+- `*.kdb`: pickled `KmerDB` and genome lengths dictionary (from FASTA headers)
 
-# loading FASTA/Q files:
-I use generators to load Read and Reference objects one by one from file.
-From FASTQ file - I read 4 lines and separating them into: read header, sequence data, separator, and quality - then construct Read object. From FASTA file - I read first line of a genome and stop at the next genome header and separate them into: reference genome header, genome sequence data and construct Reference object.
+### FASTA/Q Loading:
+- FASTQ: reads 4-line blocks and creates `Read` objects.
+- FASTA: reads genome header + sequence to create `Reference` objects using generators.
 
+---
 
+Developed by Elal Gilboa  
+Hebrew University – Bioinformatics Project
