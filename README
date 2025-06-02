@@ -1,22 +1,16 @@
 # Bio Sequence / Elal Gilboa
 
 ## 🔧 Extensions:
-
 - **EXTQUALITY** – Filters out low-quality reads, low-quality Kmers, and highly redundant Kmers during the mapping process.
 - **EXTREVCOMP** – Determines the best orientation for each read (forward/reverse) based on the number of unique Kmers.
 - **EXTCOVERAGE** – Calculates genome coverage based on unique and ambiguous read alignments.
 - **EXTSIM** – Filters highly similar genomes from the reference Kmer DB and provides filtering statistics.
 
----
-
 ## 🚀 Usage
-
 Run from the command line:
 ```bash
 python3 main.py -t [chosen_task] [chosen_flags]
 ```
-
----
 
 ## ✅ Valid Flag Combinations:
 
@@ -69,15 +63,10 @@ Or:
 -t dumpalign -g genome.fa -k 21 --reads input.fq [options]
 ```
 
----
-
 ## 🔌 Extension Parameters
-
 - **EXTQUALITY**: `--min-read-quality MRQ`, `--min-kmer-quality MKQ`, `--max-genomes MG`
 - **EXTREVCOMP**: `--reverse-complement`
 - **EXTCOVERAGE**: `--coverage`, `--genomes g1,g2,...`, `--min-coverage MC`, `--full-coverage`
-
----
 
 ## 🧠 Design
 
